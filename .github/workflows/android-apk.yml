@@ -1,0 +1,46 @@
+name: Build Android APK
+
+# Builds an installable APK in the cloud (where the Android SDK and Google
+# Maven are reachable) and uploads it as a downloadable artifact. Trigger it
+# automatically on push, or manually from the Actions tab ("Run workflow").
+on:
+  push:
+    branches: ["**"]
+  workflow_dispatch:
+
+jobs:
+  build-apk:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Java 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Run tests
+        run: flutter test
+
+      - name: Build release APK
+        # The default Flutter Android template signs release builds with the
+        # debug key, so this APK installs directly on a phone for testing.
+        run: flutter build apk --release
+
+      - name: Upload APK artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: caloriedesi-apk
+          path: build/app/outputs/flutter-apk/app-release.apk
+          if-no-files-found: error
