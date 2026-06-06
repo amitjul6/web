@@ -21,7 +21,7 @@ void main() {
   test('distance running converts km to minutes via pace', () {
     final running = kExerciseCatalog.firstWhere((e) => e.id == 'running');
     final kcal = computeExerciseCalories(running, 5, 70); // 5 km
-    final minutes = 5 * kRunningMinPerKm;
+    const minutes = 5 * kRunningMinPerKm;
     final expected = running.met * 3.5 * 70 / 200 * minutes;
     expect(kcal, closeTo(expected, 0.01));
   });

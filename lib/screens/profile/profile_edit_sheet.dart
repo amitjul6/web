@@ -107,7 +107,7 @@ class _ProfileEditSheetState extends ConsumerState<_ProfileEditSheet> {
           ),
           const SizedBox(height: 16),
           DropdownButtonFormField<ActivityLevel>(
-            value: _p.activityLevel,
+            initialValue: _p.activityLevel,
             decoration: const InputDecoration(labelText: 'Activity level'),
             items: ActivityLevel.values
                 .map((a) => DropdownMenuItem(value: a, child: Text(a.label)))

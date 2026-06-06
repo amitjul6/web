@@ -104,7 +104,7 @@ class _AddExerciseSheetState extends ConsumerState<_AddExerciseSheet> {
             width: double.infinity,
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: AppTheme.caloriesOut.withOpacity(0.12),
+              color: AppTheme.caloriesOut.withValues(alpha: 0.12),
               borderRadius: BorderRadius.circular(16),
             ),
             child: Row(

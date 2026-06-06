@@ -85,7 +85,7 @@ class WeightChart extends StatelessWidget {
               dotData: const FlDotData(show: true),
               belowBarData: BarAreaData(
                 show: true,
-                color: AppTheme.seed.withOpacity(0.12),
+                color: AppTheme.seed.withValues(alpha: 0.12),
               ),
             ),
           ],

@@ -109,14 +109,20 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
           ),
           const SizedBox(height: 20),
           _label('Activity level'),
-          ...ActivityLevel.values.map(
-            (a) => RadioListTile<ActivityLevel>(
-              value: a,
-              groupValue: _activity,
-              onChanged: (v) => setState(() => _activity = v!),
-              title: Text(a.label),
-              subtitle: Text(a.description),
-              contentPadding: EdgeInsets.zero,
+          RadioGroup<ActivityLevel>(
+            groupValue: _activity,
+            onChanged: (v) => setState(() => _activity = v!),
+            child: Column(
+              children: ActivityLevel.values
+                  .map(
+                    (a) => RadioListTile<ActivityLevel>(
+                      value: a,
+                      title: Text(a.label),
+                      subtitle: Text(a.description),
+                      contentPadding: EdgeInsets.zero,
+                    ),
+                  )
+                  .toList(),
             ),
           ),
           const SizedBox(height: 12),

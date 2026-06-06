@@ -146,7 +146,7 @@ class _MiniStat extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.10),
+        color: color.withValues(alpha: 0.10),
         borderRadius: BorderRadius.circular(16),
       ),
       child: Column(
@@ -221,7 +221,7 @@ class _StepsCard extends StatelessWidget {
                     style: TextStyle(color: Theme.of(context).colorScheme.outline)),
                 const SizedBox(height: 6),
                 if (sensorStatus == StepSensorStatus.denied)
-                  Text(
+                  const Text(
                     'Sensor off — use Override',
                     style: TextStyle(
                         color: AppTheme.warning,

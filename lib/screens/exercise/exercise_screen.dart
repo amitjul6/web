@@ -33,7 +33,7 @@ class ExerciseScreen extends ConsumerWidget {
             margin: const EdgeInsets.symmetric(horizontal: 16),
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: AppTheme.caloriesOut.withOpacity(0.10),
+              color: AppTheme.caloriesOut.withValues(alpha: 0.10),
               borderRadius: BorderRadius.circular(16),
             ),
             child: Row(
