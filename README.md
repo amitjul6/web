@@ -50,25 +50,21 @@ docs/          android_setup.md (manifest, gradle, Google sign-in, signing)
 ```
 
 ## Build & run (local)
-Prerequisites: [Flutter SDK](https://docs.flutter.dev/get-started/install) (3.22+)
+Prerequisites: [Flutter SDK](https://docs.flutter.dev/get-started/install) (3.35+)
 with the Android toolchain (`flutter doctor` all green).
 
+The `android/` platform folder is **already included** (with the
+`ACTIVITY_RECOGNITION` permission wired in), so you can build straight away:
+
 ```bash
-# 1. Generate the Android platform shell (this repo ships lib/ + pubspec only).
-flutter create --platforms=android --org com.caloriedesi --project-name caloriedesi .
-#    If it overwrites any of our files, restore them:
-git checkout -- pubspec.yaml lib/main.dart analysis_options.yaml README.md
-
-# 2. Apply the Android config in docs/android_setup.md (permissions + minSdk).
-
-# 3. Install deps, run tests, launch.
 flutter pub get
-flutter test
+flutter test                # 19 unit tests
 flutter run                 # on a connected device/emulator
-
-# 4. Build a testable APK
 flutter build apk --debug   # build/app/outputs/flutter-apk/app-debug.apk
 ```
+
+> Verified: this project passes `flutter analyze` (no issues) and `flutter test`
+> (all green), and compiles end-to-end on Flutter 3.44.1.
 
 For a **signed release APK / Play Store bundle** and **Google sign-in setup**
 (Firebase project, `google-services.json`, SHA-1 registration, keystore), follow
