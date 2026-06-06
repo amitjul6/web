@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Indian Food & Calorie Tracker</title>
+  <style>
+    :root {
+      --bg: #f4f6f8;
+      --card: #ffffff;
+      --ink: #1f2933;
+      --muted: #6b7280;
+      --line: #e5e7eb;
+      --brand: #e8590c;
+      --brand-soft: #fff1e6;
+      --green: #2f9e44;
+      --red: #e03131;
+      --shadow: 0 1px 3px rgba(0,0,0,.08), 0 1px 2px rgba(0,0,0,.04);
+      --radius: 14px;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background: var(--bg);
+      color: var(--ink);
+      line-height: 1.45;
+    }
+    header {
+      background: linear-gradient(135deg, #f76707, #e8590c);
+      color: #fff;
+      padding: 20px 16px;
+      text-align: center;
+    }
+    header h1 { margin: 0; font-size: 1.4rem; letter-spacing: .2px; }
+    header p { margin: 4px 0 0; opacity: .9; font-size: .85rem; }
+    .wrap { max-width: 760px; margin: 0 auto; padding: 16px; }
+    .card {
+      background: var(--card);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 16px;
+      margin-bottom: 16px;
+    }
+    .row { display: flex; align-items: center; gap: 10px; }
+    .between { justify-content: space-between; }
+
+    /* Date nav + summary */
+    .date-nav { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 14px; }
+    .date-nav .date-label { font-weight: 600; font-size: 1rem; text-align: center; flex: 1; }
+    .icon-btn {
+      border: 1px solid var(--line); background: #fff; border-radius: 10px;
+      width: 38px; height: 38px; font-size: 1.1rem; cursor: pointer; color: var(--ink);
+      display: inline-flex; align-items: center; justify-content: center;
+    }
+    .icon-btn:hover { background: #f8f9fa; }
+
+    .summary { text-align: center; }
+    .summary .big { font-size: 2.2rem; font-weight: 700; }
+    .summary .big .goal { color: var(--muted); font-size: 1.1rem; font-weight: 500; }
+    .summary .sub { color: var(--muted); font-size: .85rem; margin-top: 2px; }
+    .bar { height: 12px; background: var(--line); border-radius: 99px; overflow: hidden; margin: 12px 0 6px; }
+    .bar > span { display: block; height: 100%; background: var(--green); transition: width .25s ease; }
+    .bar.over > span { background: var(--red); }
+    .macros { display: flex; justify-content: center; gap: 18px; margin-top: 10px; font-size: .8rem; color: var(--muted); }
+    .macros b { color: var(--ink); display: block; font-size: .95rem; }
+
+    .goal-edit { margin-top: 10px; font-size: .85rem; color: var(--muted); }
+    .goal-edit input { width: 78px; padding: 4px 6px; border: 1px solid var(--line); border-radius: 8px; font-size: .85rem; }
+
+    h2 { font-size: 1rem; margin: 0 0 12px; }
+
+    /* Search */
+    .search { position: relative; }
+    .search input {
+      width: 100%; padding: 12px 14px; font-size: .95rem;
+      border: 1px solid var(--line); border-radius: 12px; outline: none;
+    }
+    .search input:focus { border-color: var(--brand); box-shadow: 0 0 0 3px var(--brand-soft); }
+    .cats { display: flex; flex-wrap: wrap; gap: 6px; margin: 12px 0 4px; }
+    .chip {
+      border: 1px solid var(--line); background: #fff; color: var(--muted);
+      padding: 5px 11px; border-radius: 99px; font-size: .78rem; cursor: pointer; white-space: nowrap;
+    }
+    .chip.active { background: var(--brand); border-color: var(--brand); color: #fff; }
+
+    .food-list { max-height: 320px; overflow-y: auto; margin-top: 8px; }
+    .food-item {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 10px 4px; border-bottom: 1px solid var(--line); gap: 10px;
+    }
+    .food-item:last-child { border-bottom: none; }
+    .food-item .name { font-weight: 600; font-size: .92rem; }
+    .food-item .meta { color: var(--muted); font-size: .78rem; }
+    .add-btn {
+      border: none; background: var(--brand-soft); color: var(--brand);
+      font-weight: 700; border-radius: 10px; padding: 8px 14px; cursor: pointer; white-space: nowrap;
+    }
+    .add-btn:hover { background: #ffe3cc; }
+
+    /* Log */
+    .log-item {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 10px 0; border-bottom: 1px solid var(--line); gap: 8px;
+    }
+    .log-item:last-child { border-bottom: none; }
+    .log-item .name { font-weight: 600; font-size: .92rem; }
+    .log-item .meta { color: var(--muted); font-size: .78rem; }
+    .qty {
+      display: flex; align-items: center; gap: 2px; border: 1px solid var(--line);
+      border-radius: 8px; overflow: hidden;
+    }
+    .qty button { border: none; background: #f8f9fa; width: 26px; height: 28px; cursor: pointer; font-size: 1rem; color: var(--ink); }
+    .qty button:hover { background: #eef0f2; }
+    .qty span { min-width: 26px; text-align: center; font-size: .85rem; }
+    .cal-tag { font-weight: 700; font-size: .9rem; min-width: 64px; text-align: right; }
+    .del { border: none; background: none; color: var(--red); cursor: pointer; font-size: 1.1rem; padding: 4px; }
+    .empty { color: var(--muted); text-align: center; padding: 22px 0; font-size: .9rem; }
+    .muted-note { color: var(--muted); font-size: .75rem; text-align: center; margin-top: 18px; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>🍛 Indian Food & Calorie Tracker</h1>
+    <p>Log your meals · track calories · built-in Indian food library</p>
+  </header>
+
+  <div class="wrap">
+    <!-- Daily summary -->
+    <div class="card">
+      <div class="date-nav">
+        <button class="icon-btn" id="prevDay" title="Previous day">‹</button>
+        <div class="date-label" id="dateLabel">Today</div>
+        <button class="icon-btn" id="nextDay" title="Next day">›</button>
+      </div>
+      <div class="summary">
+        <div class="big"><span id="totalCal">0</span> <span class="goal">/ <span id="goalCal">2000</span> kcal</span></div>
+        <div class="sub" id="remaining">2000 kcal remaining</div>
+        <div class="bar" id="bar"><span id="barFill" style="width:0%"></span></div>
+        <div class="macros">
+          <div>Protein<b id="mProtein">0 g</b></div>
+          <div>Carbs<b id="mCarbs">0 g</b></div>
+          <div>Fat<b id="mFat">0 g</b></div>
+        </div>
+        <div class="goal-edit">
+          Daily goal:
+          <input type="number" id="goalInput" min="500" max="6000" step="50" /> kcal
+        </div>
+      </div>
+    </div>
+
+    <!-- Today's log -->
+    <div class="card">
+      <h2>📋 Logged today (<span id="logCount">0</span>)</h2>
+      <div id="logList"></div>
+    </div>
+
+    <!-- Food library -->
+    <div class="card">
+      <h2>🔎 Add food from library</h2>
+      <div class="search">
+        <input type="text" id="searchInput" placeholder="Search e.g. dosa, dal, roti, biryani..." />
+      </div>
+      <div class="cats" id="cats"></div>
+      <div class="food-list" id="foodList"></div>
+    </div>
+
+    <p class="muted-note">Calorie & macro values are typical estimates per listed portion. Data is saved in your browser only.</p>
+  </div>
+
+  <script>
+  /* ---------------- Indian food library ----------------
+     Each item: name, category, portion label, calories, protein, carbs, fat (per 1 portion) */
+  const FOODS = [
+    // Breads
+    { n: "Roti / Chapati", cat: "Breads", portion: "1 medium", cal: 104, p: 3, c: 18, f: 3 },
+    { n: "Plain Paratha", cat: "Breads", portion: "1 piece", cal: 126, p: 3, c: 18, f: 5 },
+    { n: "Aloo Paratha", cat: "Breads", portion: "1 piece", cal: 210, p: 5, c: 30, f: 8 },
+    { n: "Naan", cat: "Breads", portion: "1 piece", cal: 262, p: 9, c: 45, f: 5 },
+    { n: "Butter Naan", cat: "Breads", portion: "1 piece", cal: 320, p: 9, c: 45, f: 12 },
+    { n: "Tandoori Roti", cat: "Breads", portion: "1 piece", cal: 110, p: 3, c: 22, f: 1 },
+    { n: "Bhatura", cat: "Breads", portion: "1 piece", cal: 230, p: 5, c: 33, f: 9 },
+    { n: "Puri", cat: "Breads", portion: "1 piece", cal: 85, p: 1.5, c: 9, f: 5 },
+
+    // Rice
+    { n: "Steamed Rice", cat: "Rice", portion: "1 cup", cal: 205, p: 4, c: 45, f: 0.4 },
+    { n: "Jeera Rice", cat: "Rice", portion: "1 cup", cal: 245, p: 4, c: 45, f: 6 },
+    { n: "Veg Biryani", cat: "Rice", portion: "1 cup", cal: 240, p: 6, c: 38, f: 7 },
+    { n: "Chicken Biryani", cat: "Rice", portion: "1 cup", cal: 290, p: 14, c: 35, f: 10 },
+    { n: "Lemon Rice", cat: "Rice", portion: "1 cup", cal: 220, p: 4, c: 38, f: 6 },
+    { n: "Curd Rice", cat: "Rice", portion: "1 cup", cal: 200, p: 6, c: 32, f: 5 },
+    { n: "Pulao (Veg)", cat: "Rice", portion: "1 cup", cal: 230, p: 5, c: 40, f: 6 },
+
+    // Dals & Curries (veg)
+    { n: "Dal Tadka", cat: "Dals & Curries", portion: "1 cup", cal: 180, p: 9, c: 24, f: 6 },
+    { n: "Dal Makhani", cat: "Dals & Curries", portion: "1 cup", cal: 330, p: 11, c: 30, f: 18 },
+    { n: "Rajma Masala", cat: "Dals & Curries", portion: "1 cup", cal: 245, p: 12, c: 35, f: 6 },
+    { n: "Chana Masala", cat: "Dals & Curries", portion: "1 cup", cal: 270, p: 12, c: 38, f: 8 },
+    { n: "Sambar", cat: "Dals & Curries", portion: "1 cup", cal: 150, p: 7, c: 22, f: 4 },
+    { n: "Rasam", cat: "Dals & Curries", portion: "1 cup", cal: 65, p: 3, c: 11, f: 1 },
+    { n: "Palak Paneer", cat: "Dals & Curries", portion: "1 cup", cal: 270, p: 13, c: 12, f: 19 },
+    { n: "Paneer Butter Masala", cat: "Dals & Curries", portion: "1 cup", cal: 350, p: 14, c: 16, f: 25 },
+    { n: "Shahi Paneer", cat: "Dals & Curries", portion: "1 cup", cal: 340, p: 13, c: 15, f: 24 },
+    { n: "Mixed Veg Curry", cat: "Dals & Curries", portion: "1 cup", cal: 180, p: 5, c: 18, f: 10 },
+    { n: "Aloo Gobi", cat: "Dals & Curries", portion: "1 cup", cal: 200, p: 5, c: 24, f: 10 },
+    { n: "Bhindi Masala", cat: "Dals & Curries", portion: "1 cup", cal: 175, p: 4, c: 16, f: 11 },
+    { n: "Baingan Bharta", cat: "Dals & Curries", portion: "1 cup", cal: 160, p: 4, c: 18, f: 9 },
+
+    // Non-veg
+    { n: "Chicken Curry", cat: "Non-veg", portion: "1 cup", cal: 290, p: 25, c: 8, f: 18 },
+    { n: "Butter Chicken", cat: "Non-veg", portion: "1 cup", cal: 340, p: 24, c: 12, f: 22 },
+    { n: "Chicken Tikka", cat: "Non-veg", portion: "4 pieces", cal: 220, p: 30, c: 4, f: 9 },
+    { n: "Egg Curry", cat: "Non-veg", portion: "1 cup (2 eggs)", cal: 240, p: 14, c: 8, f: 17 },
+    { n: "Boiled Egg", cat: "Non-veg", portion: "1 egg", cal: 78, p: 6, c: 0.6, f: 5 },
+    { n: "Fish Curry", cat: "Non-veg", portion: "1 cup", cal: 230, p: 22, c: 6, f: 13 },
+    { n: "Mutton Curry", cat: "Non-veg", portion: "1 cup", cal: 360, p: 26, c: 6, f: 26 },
+
+    // Breakfast / South Indian
+    { n: "Idli", cat: "Breakfast", portion: "2 pieces", cal: 116, p: 4, c: 24, f: 0.6 },
+    { n: "Plain Dosa", cat: "Breakfast", portion: "1 piece", cal: 168, p: 4, c: 28, f: 4 },
+    { n: "Masala Dosa", cat: "Breakfast", portion: "1 piece", cal: 290, p: 6, c: 42, f: 11 },
+    { n: "Medu Vada", cat: "Breakfast", portion: "2 pieces", cal: 200, p: 6, c: 24, f: 9 },
+    { n: "Upma", cat: "Breakfast", portion: "1 cup", cal: 250, p: 6, c: 38, f: 8 },
+    { n: "Poha", cat: "Breakfast", portion: "1 cup", cal: 270, p: 5, c: 45, f: 8 },
+    { n: "Aloo Sabzi", cat: "Breakfast", portion: "1 cup", cal: 180, p: 4, c: 26, f: 7 },
+
+    // Snacks & Street food
+    { n: "Samosa", cat: "Snacks", portion: "1 piece", cal: 260, p: 4, c: 28, f: 14 },
+    { n: "Pakora / Bhaji", cat: "Snacks", portion: "100 g", cal: 315, p: 7, c: 30, f: 18 },
+    { n: "Dhokla", cat: "Snacks", portion: "2 pieces", cal: 160, p: 6, c: 26, f: 4 },
+    { n: "Vada Pav", cat: "Snacks", portion: "1 piece", cal: 290, p: 7, c: 42, f: 11 },
+    { n: "Pav Bhaji", cat: "Snacks", portion: "1 plate", cal: 400, p: 9, c: 52, f: 17 },
+    { n: "Pani Puri", cat: "Snacks", portion: "6 pieces", cal: 180, p: 3, c: 32, f: 5 },
+    { n: "Bhel Puri", cat: "Snacks", portion: "1 cup", cal: 230, p: 5, c: 38, f: 7 },
+    { n: "Chole Bhature", cat: "Snacks", portion: "1 plate", cal: 450, p: 12, c: 55, f: 20 },
+
+    // Sweets
+    { n: "Gulab Jamun", cat: "Sweets", portion: "1 piece", cal: 150, p: 2, c: 22, f: 6 },
+    { n: "Rasgulla", cat: "Sweets", portion: "1 piece", cal: 106, p: 2, c: 22, f: 1.5 },
+    { n: "Jalebi", cat: "Sweets", portion: "1 piece (30 g)", cal: 150, p: 1, c: 25, f: 5 },
+    { n: "Kheer", cat: "Sweets", portion: "1 cup", cal: 250, p: 6, c: 40, f: 8 },
+    { n: "Gajar Halwa", cat: "Sweets", portion: "1/2 cup", cal: 270, p: 4, c: 36, f: 13 },
+    { n: "Besan Ladoo", cat: "Sweets", portion: "1 piece", cal: 185, p: 3, c: 20, f: 11 },
+    { n: "Barfi", cat: "Sweets", portion: "1 piece", cal: 165, p: 3, c: 18, f: 9 },
+
+    // Drinks & Sides
+    { n: "Masala Chai", cat: "Drinks & Sides", portion: "1 cup", cal: 90, p: 2, c: 12, f: 3 },
+    { n: "Sweet Lassi", cat: "Drinks & Sides", portion: "1 glass", cal: 220, p: 6, c: 30, f: 8 },
+    { n: "Buttermilk / Chaas", cat: "Drinks & Sides", portion: "1 glass", cal: 60, p: 3, c: 6, f: 2 },
+    { n: "Filter Coffee", cat: "Drinks & Sides", portion: "1 cup", cal: 90, p: 3, c: 11, f: 3 },
+    { n: "Plain Curd / Yogurt", cat: "Drinks & Sides", portion: "1 cup", cal: 100, p: 8, c: 11, f: 4 },
+    { n: "Raita", cat: "Drinks & Sides", portion: "1/2 cup", cal: 90, p: 4, c: 7, f: 5 },
+    { n: "Papad", cat: "Drinks & Sides", portion: "1 piece", cal: 40, p: 2, c: 6, f: 1 },
+    { n: "Pickle (Achar)", cat: "Drinks & Sides", portion: "1 tbsp", cal: 30, p: 0.3, c: 2, f: 2.5 },
+    { n: "Ghee", cat: "Drinks & Sides", portion: "1 tsp", cal: 45, p: 0, c: 0, f: 5 },
+    { n: "Banana", cat: "Drinks & Sides", portion: "1 medium", cal: 105, p: 1, c: 27, f: 0.4 },
+  ];
+
+  const CATEGORIES = ["All", ...Array.from(new Set(FOODS.map(f => f.cat)))];
+
+  /* ---------------- Storage helpers ---------------- */
+  const LOG_KEY = "foodtracker:log";
+  const GOAL_KEY = "foodtracker:goal";
+
+  function loadLog() {
+    try { return JSON.parse(localStorage.getItem(LOG_KEY)) || {}; }
+    catch { return {}; }
+  }
+  function saveLog(log) { localStorage.setItem(LOG_KEY, JSON.stringify(log)); }
+  function loadGoal() { return Number(localStorage.getItem(GOAL_KEY)) || 2000; }
+  function saveGoal(g) { localStorage.setItem(GOAL_KEY, String(g)); }
+
+  /* ---------------- State ---------------- */
+  let currentDate = new Date();
+  let activeCat = "All";
+  let searchTerm = "";
+  let log = loadLog();
+  let goal = loadGoal();
+
+  const dateKey = (d) => {
+    const y = d.getFullYear();
+    const m = String(d.getMonth() + 1).padStart(2, "0");
+    const day = String(d.getDate()).padStart(2, "0");
+    return `${y}-${m}-${day}`;
+  };
+  const isSameDay = (a, b) => dateKey(a) === dateKey(b);
+
+  function dateDisplay(d) {
+    const today = new Date();
+    const yest = new Date(); yest.setDate(today.getDate() - 1);
+    const tmr = new Date(); tmr.setDate(today.getDate() + 1);
+    if (isSameDay(d, today)) return "Today";
+    if (isSameDay(d, yest)) return "Yesterday";
+    if (isSameDay(d, tmr)) return "Tomorrow";
+    return d.toLocaleDateString(undefined, { weekday: "short", month: "short", day: "numeric" });
+  }
+
+  function todaysEntries() { return log[dateKey(currentDate)] || []; }
+
+  /* ---------------- Mutations ---------------- */
+  function addFood(food) {
+    const key = dateKey(currentDate);
+    if (!log[key]) log[key] = [];
+    const existing = log[key].find(e => e.n === food.n);
+    if (existing) {
+      existing.qty += 1;
+    } else {
+      log[key].push({ id: Date.now() + Math.random(), n: food.n, portion: food.portion,
+                      cal: food.cal, p: food.p, c: food.c, f: food.f, qty: 1 });
+    }
+    saveLog(log); render();
+  }
+  function changeQty(id, delta) {
+    const entries = todaysEntries();
+    const e = entries.find(x => x.id === id);
+    if (!e) return;
+    e.qty += delta;
+    if (e.qty <= 0) {
+      log[dateKey(currentDate)] = entries.filter(x => x.id !== id);
+    }
+    saveLog(log); render();
+  }
+  function removeEntry(id) {
+    const key = dateKey(currentDate);
+    log[key] = todaysEntries().filter(x => x.id !== id);
+    saveLog(log); render();
+  }
+
+  /* ---------------- Rendering ---------------- */
+  function renderSummary() {
+    const entries = todaysEntries();
+    const tot = entries.reduce((s, e) => s + e.cal * e.qty, 0);
+    const protein = entries.reduce((s, e) => s + e.p * e.qty, 0);
+    const carbs = entries.reduce((s, e) => s + e.c * e.qty, 0);
+    const fat = entries.reduce((s, e) => s + e.f * e.qty, 0);
+
+    document.getElementById("totalCal").textContent = Math.round(tot);
+    document.getElementById("goalCal").textContent = goal;
+    const rem = goal - tot;
+    const remEl = document.getElementById("remaining");
+    remEl.textContent = rem >= 0
+      ? `${Math.round(rem)} kcal remaining`
+      : `${Math.round(-rem)} kcal over goal`;
+    remEl.style.color = rem >= 0 ? "var(--muted)" : "var(--red)";
+
+    const pct = Math.min(100, Math.round((tot / goal) * 100));
+    document.getElementById("barFill").style.width = pct + "%";
+    document.getElementById("bar").classList.toggle("over", tot > goal);
+
+    document.getElementById("mProtein").textContent = Math.round(protein) + " g";
+    document.getElementById("mCarbs").textContent = Math.round(carbs) + " g";
+    document.getElementById("mFat").textContent = Math.round(fat) + " g";
+
+    document.getElementById("dateLabel").textContent = dateDisplay(currentDate);
+    document.getElementById("goalInput").value = goal;
+  }
+
+  function renderLog() {
+    const entries = todaysEntries();
+    document.getElementById("logCount").textContent = entries.length;
+    const list = document.getElementById("logList");
+    if (!entries.length) {
+      list.innerHTML = '<div class="empty">No food logged yet. Add something from the library below 👇</div>';
+      return;
+    }
+    list.innerHTML = "";
+    entries.forEach(e => {
+      const div = document.createElement("div");
+      div.className = "log-item";
+      div.innerHTML = `
+        <div style="flex:1; min-width:0;">
+          <div class="name">${e.n}</div>
+          <div class="meta">${e.portion} · ${e.cal} kcal each</div>
+        </div>
+        <div class="qty">
+          <button data-act="dec">−</button>
+          <span>${e.qty}</span>
+          <button data-act="inc">+</button>
+        </div>
+        <div class="cal-tag">${Math.round(e.cal * e.qty)} kcal</div>
+        <button class="del" title="Remove">🗑</button>`;
+      div.querySelector('[data-act="dec"]').onclick = () => changeQty(e.id, -1);
+      div.querySelector('[data-act="inc"]').onclick = () => changeQty(e.id, 1);
+      div.querySelector(".del").onclick = () => removeEntry(e.id);
+      list.appendChild(div);
+    });
+  }
+
+  function renderCats() {
+    const wrap = document.getElementById("cats");
+    wrap.innerHTML = "";
+    CATEGORIES.forEach(cat => {
+      const chip = document.createElement("div");
+      chip.className = "chip" + (cat === activeCat ? " active" : "");
+      chip.textContent = cat;
+      chip.onclick = () => { activeCat = cat; renderCats(); renderFoodList(); };
+      wrap.appendChild(chip);
+    });
+  }
+
+  function renderFoodList() {
+    const list = document.getElementById("foodList");
+    const term = searchTerm.trim().toLowerCase();
+    const filtered = FOODS.filter(f =>
+      (activeCat === "All" || f.cat === activeCat) &&
+      (term === "" || f.n.toLowerCase().includes(term))
+    );
+    if (!filtered.length) {
+      list.innerHTML = '<div class="empty">No matching foods.</div>';
+      return;
+    }
+    list.innerHTML = "";
+    filtered.forEach(f => {
+      const div = document.createElement("div");
+      div.className = "food-item";
+      div.innerHTML = `
+        <div style="flex:1; min-width:0;">
+          <div class="name">${f.n}</div>
+          <div class="meta">${f.portion} · ${f.cal} kcal · P${f.p} C${f.c} F${f.f}</div>
+        </div>
+        <button class="add-btn">+ Add</button>`;
+      div.querySelector(".add-btn").onclick = () => addFood(f);
+      list.appendChild(div);
+    });
+  }
+
+  function render() {
+    renderSummary();
+    renderLog();
+    renderFoodList();
+  }
+
+  /* ---------------- Events ---------------- */
+  document.getElementById("prevDay").onclick = () => {
+    currentDate.setDate(currentDate.getDate() - 1); render();
+  };
+  document.getElementById("nextDay").onclick = () => {
+    currentDate.setDate(currentDate.getDate() + 1); render();
+  };
+  document.getElementById("searchInput").addEventListener("input", (e) => {
+    searchTerm = e.target.value; renderFoodList();
+  });
+  document.getElementById("goalInput").addEventListener("change", (e) => {
+    const v = Number(e.target.value);
+    if (v >= 500 && v <= 6000) { goal = v; saveGoal(goal); renderSummary(); }
+  });
+
+  /* ---------------- Init ---------------- */
+  renderCats();
+  render();
+  </script>
+</body>
+</html>
