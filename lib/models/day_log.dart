@@ -1,3 +1,4 @@
+import 'enums.dart';
 import 'exercise_entry.dart';
 import 'food_log_entry.dart';
 import 'step_record.dart';
@@ -24,6 +25,20 @@ class DayLog {
   double get fatG => foods.fold(0.0, (s, e) => s + e.totalFat);
   double get exerciseCalories =>
       exercises.fold(0.0, (s, e) => s + e.caloriesBurned);
+
+  /// Total workout minutes for the day. Duration entries contribute directly;
+  /// distance entries are converted at a typical running pace (~6.5 min/km);
+  /// rep-based entries don't carry a duration so they're excluded here.
+  double get workoutMinutes => exercises.fold(0.0, (s, e) {
+        switch (e.inputMode) {
+          case ExerciseInputMode.duration:
+            return s + e.amount;
+          case ExerciseInputMode.distance:
+            return s + e.amount * 6.5;
+          case ExerciseInputMode.reps:
+            return s;
+        }
+      });
 
   DayLog copyWith({
     List<FoodLogEntry>? foods,

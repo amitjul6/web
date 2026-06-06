@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../data/badge_catalog.dart';
+import '../../models/daily_goals.dart';
 import '../../models/daily_summary.dart';
+import '../../widgets/activity_rings.dart';
 import '../../providers/app_data_provider.dart';
 import '../../providers/auth_provider.dart';
 import '../../providers/steps_controller.dart';
@@ -34,6 +36,8 @@ class DashboardScreen extends ConsumerWidget {
         children: [
           const DateSelector(),
           const SizedBox(height: 16),
+          _ActivityRingsCard(summary: summary, goals: goals),
+          const SizedBox(height: 16),
           _NetHero(summary: summary, netGoal: goals.netCalorieGoal),
           const SizedBox(height: 16),
           _StepsCard(
@@ -54,6 +58,86 @@ class DashboardScreen extends ConsumerWidget {
           ),
         ],
       ),
+    );
+  }
+}
+
+class _ActivityRingsCard extends StatelessWidget {
+  final DailySummary summary;
+  final DailyGoals goals;
+  const _ActivityRingsCard({required this.summary, required this.goals});
+
+  static const _stepsColor = AppTheme.steps; // indigo
+  static const _moveColor = AppTheme.caloriesIn; // orange
+  static const _workoutColor = AppTheme.positive; // green
+
+  @override
+  Widget build(BuildContext context) {
+    final stepP = goals.stepGoal <= 0 ? 0.0 : summary.steps / goals.stepGoal;
+    final moveP = goals.activeCalorieGoal <= 0
+        ? 0.0
+        : summary.activeCalories / goals.activeCalorieGoal;
+    final workP = goals.workoutMinutesGoal <= 0
+        ? 0.0
+        : summary.workoutMinutes / goals.workoutMinutesGoal;
+
+    return SectionCard(
+      title: 'Today',
+      child: Row(
+        children: [
+          ActivityRings(
+            size: 150,
+            stroke: 15,
+            rings: [
+              RingData(stepP, _stepsColor),
+              RingData(moveP, _moveColor),
+              RingData(workP, _workoutColor),
+            ],
+          ),
+          const SizedBox(width: 20),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _legend(_stepsColor, 'Steps', '${summary.steps}',
+                    '${goals.stepGoal}'),
+                const SizedBox(height: 12),
+                _legend(_moveColor, 'Move', '${summary.activeCalories.round()}',
+                    '${goals.activeCalorieGoal} kcal'),
+                const SizedBox(height: 12),
+                _legend(_workoutColor, 'Workout',
+                    '${summary.workoutMinutes.round()}',
+                    '${goals.workoutMinutesGoal} min'),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _legend(Color color, String label, String value, String goal) {
+    return Row(
+      children: [
+        Container(
+          width: 12,
+          height: 12,
+          decoration: BoxDecoration(color: color, shape: BoxShape.circle),
+        ),
+        const SizedBox(width: 8),
+        Expanded(
+          child: Text(label,
+              style: const TextStyle(fontWeight: FontWeight.w600)),
+        ),
+        Text.rich(TextSpan(children: [
+          TextSpan(
+              text: value,
+              style: TextStyle(fontWeight: FontWeight.w800, color: color)),
+          TextSpan(
+              text: ' / $goal',
+              style: const TextStyle(fontSize: 12, color: Colors.grey)),
+        ])),
+      ],
     );
   }
 }

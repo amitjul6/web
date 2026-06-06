@@ -136,26 +136,46 @@ class ProfileScreen extends ConsumerWidget {
       BuildContext context, WidgetRef ref, DailyGoals goals) async {
     final stepC = TextEditingController(text: goals.stepGoal.toString());
     final calC = TextEditingController(text: goals.netCalorieGoal.toString());
+    final activeC =
+        TextEditingController(text: goals.activeCalorieGoal.toString());
+    final workoutC =
+        TextEditingController(text: goals.workoutMinutesGoal.toString());
     final saved = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
         title: const Text('Daily goals'),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            TextField(
-              controller: stepC,
-              keyboardType: TextInputType.number,
-              decoration: const InputDecoration(labelText: 'Step goal'),
-            ),
-            const SizedBox(height: 12),
-            TextField(
-              controller: calC,
-              keyboardType: TextInputType.number,
-              decoration:
-                  const InputDecoration(labelText: 'Net calorie target'),
-            ),
-          ],
+        content: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              TextField(
+                controller: stepC,
+                keyboardType: TextInputType.number,
+                decoration: const InputDecoration(labelText: 'Step goal'),
+              ),
+              const SizedBox(height: 12),
+              TextField(
+                controller: calC,
+                keyboardType: TextInputType.number,
+                decoration:
+                    const InputDecoration(labelText: 'Net calorie target'),
+              ),
+              const SizedBox(height: 12),
+              TextField(
+                controller: activeC,
+                keyboardType: TextInputType.number,
+                decoration: const InputDecoration(
+                    labelText: 'Move goal (active kcal)'),
+              ),
+              const SizedBox(height: 12),
+              TextField(
+                controller: workoutC,
+                keyboardType: TextInputType.number,
+                decoration:
+                    const InputDecoration(labelText: 'Workout goal (min)'),
+              ),
+            ],
+          ),
         ),
         actions: [
           TextButton(
@@ -173,6 +193,10 @@ class ProfileScreen extends ConsumerWidget {
               stepGoal: int.tryParse(stepC.text) ?? goals.stepGoal,
               netCalorieGoal:
                   int.tryParse(calC.text) ?? goals.netCalorieGoal,
+              activeCalorieGoal:
+                  int.tryParse(activeC.text) ?? goals.activeCalorieGoal,
+              workoutMinutesGoal:
+                  int.tryParse(workoutC.text) ?? goals.workoutMinutesGoal,
             ),
           );
     }

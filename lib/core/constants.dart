@@ -18,6 +18,8 @@ class K {
   // Defaults.
   static const int defaultStepGoal = 8000;
   static const int defaultNetCalorieGoal = 1800; // target net calories/day
+  static const int defaultActiveCalorieGoal = 500; // "move" ring target
+  static const int defaultWorkoutMinutesGoal = 30; // "exercise" ring target
 
   // Energy model. ~0.04 kcal/step at 70 kg; weight-scaled.
   static const double kcalPerStepPerKg = 0.00057;
