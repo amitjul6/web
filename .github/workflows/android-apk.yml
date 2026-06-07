@@ -1,12 +1,15 @@
 name: Build Android APK
 
-# Builds an installable APK in the cloud (where the Android SDK and Google
-# Maven are reachable) and uploads it as a downloadable artifact. Trigger it
-# automatically on push, or manually from the Actions tab ("Run workflow").
+# Builds an installable APK in the cloud and publishes it to a GitHub Release
+# so it can be downloaded straight onto a phone (no login, no unzip) from:
+#   https://github.com/amitjul6/web/releases/download/android-latest/app-release.apk
 on:
   push:
     branches: ["**"]
   workflow_dispatch:
+
+permissions:
+  contents: write   # needed to create/update the Release
 
 jobs:
   build-apk:
@@ -34,8 +37,8 @@ jobs:
         run: flutter test
 
       - name: Build release APK
-        # The default Flutter Android template signs release builds with the
-        # debug key, so this APK installs directly on a phone for testing.
+        # Default Flutter template signs release with the debug key, so this
+        # APK installs directly on a phone for testing.
         run: flutter build apk --release
 
       - name: Upload APK artifact
@@ -44,3 +47,15 @@ jobs:
           name: caloriedesi-apk
           path: build/app/outputs/flutter-apk/app-release.apk
           if-no-files-found: error
+
+      - name: Publish APK to a downloadable Release
+        if: github.ref == 'refs/heads/main'
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: android-latest
+          name: CalorieDesi — latest APK
+          body: |
+            Latest test build of CalorieDesi (debug-signed).
+            On your phone, tap **app-release.apk** below to install.
+          files: build/app/outputs/flutter-apk/app-release.apk
+          make_latest: true
