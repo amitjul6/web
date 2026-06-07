@@ -3,6 +3,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import '../data/local_store.dart';
 import '../services/auth_service.dart';
+import '../services/health_service.dart';
 import '../services/pedometer_service.dart';
 import '../services/permission_service.dart';
 
@@ -16,6 +17,8 @@ final sharedPrefsProvider = Provider<SharedPreferences>(
 );
 
 final authServiceProvider = Provider<AuthService>((ref) => AuthService());
+
+final healthServiceProvider = Provider<HealthService>((ref) => HealthService());
 
 final permissionServiceProvider =
     Provider<PermissionService>((ref) => PermissionService());

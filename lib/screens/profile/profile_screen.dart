@@ -6,6 +6,7 @@ import '../../models/daily_goals.dart';
 import '../../providers/app_data_provider.dart';
 import '../../providers/auth_provider.dart';
 import '../../widgets/section_card.dart';
+import '../integrations/integrations_screen.dart';
 import 'profile_edit_sheet.dart';
 
 class ProfileScreen extends ConsumerWidget {
@@ -91,6 +92,24 @@ class ProfileScreen extends ConsumerWidget {
                 _kv('Step goal', '${goals.stepGoal} steps'),
                 _kv('Net calorie target', '${goals.netCalorieGoal} kcal'),
               ],
+            ),
+          ),
+          const SizedBox(height: 16),
+          Card(
+            elevation: 0,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(20),
+              side: BorderSide(
+                  color: Theme.of(context).colorScheme.outlineVariant),
+            ),
+            child: ListTile(
+              leading: const Icon(Icons.watch_outlined),
+              title: const Text('Connected apps & devices'),
+              subtitle: const Text('Health Connect, Fitbit, Apple Health'),
+              trailing: const Icon(Icons.chevron_right),
+              onTap: () => Navigator.of(context).push(
+                MaterialPageRoute(builder: (_) => const IntegrationsScreen()),
+              ),
             ),
           ),
           const SizedBox(height: 16),

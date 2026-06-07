@@ -4,6 +4,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../data/badge_catalog.dart';
 import '../../models/daily_goals.dart';
 import '../../models/daily_summary.dart';
+import '../../models/health_vitals.dart';
+import '../../providers/health_provider.dart';
+import '../integrations/integrations_screen.dart';
 import '../../widgets/activity_rings.dart';
 import '../../providers/app_data_provider.dart';
 import '../../providers/auth_provider.dart';
@@ -50,6 +53,12 @@ class DashboardScreen extends ConsumerWidget {
           _EnergyOutCard(summary: summary),
           const SizedBox(height: 16),
           _MacrosCard(summary: summary),
+          const SizedBox(height: 16),
+          _VitalsCard(
+            vitals: ref.watch(healthProvider).vitals,
+            connected:
+                ref.watch(healthProvider).connected.isNotEmpty,
+          ),
           const SizedBox(height: 16),
           _StreakCard(
             current: streak.currentStreak,
@@ -140,6 +149,65 @@ class _ActivityRingsCard extends StatelessWidget {
       ],
     );
   }
+}
+
+class _VitalsCard extends StatelessWidget {
+  final HealthVitals vitals;
+  final bool connected;
+  const _VitalsCard({required this.vitals, required this.connected});
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      borderRadius: BorderRadius.circular(20),
+      onTap: () => Navigator.of(context).push(
+        MaterialPageRoute(builder: (_) => const IntegrationsScreen()),
+      ),
+      child: SectionCard(
+        title: 'Vitals',
+        trailing: const Icon(Icons.chevron_right),
+        child: (!connected || !vitals.hasAny)
+            ? Row(
+                children: [
+                  const Icon(Icons.watch_outlined, color: AppTheme.steps),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: Text(
+                      connected
+                          ? 'No vitals yet — sync your watch data'
+                          : 'Connect a watch or band (Health Connect, Fitbit…)',
+                    ),
+                  ),
+                  const Text('Connect',
+                      style: TextStyle(
+                          color: AppTheme.steps, fontWeight: FontWeight.w700)),
+                ],
+              )
+            : Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  _tile('❤️', 'HR',
+                      vitals.heartRate != null ? '${vitals.heartRate}' : '—'),
+                  _tile('📈', 'HRV',
+                      vitals.hrv != null ? '${vitals.hrv!.round()}' : '—'),
+                  _tile('🫁', 'SpO₂',
+                      vitals.spo2 != null ? '${vitals.spo2!.round()}%' : '—'),
+                  _tile('😴', 'Sleep', vitals.sleepLabel),
+                ],
+              ),
+      ),
+    );
+  }
+
+  Widget _tile(String icon, String label, String value) => Column(
+        children: [
+          Text(icon, style: const TextStyle(fontSize: 20)),
+          const SizedBox(height: 4),
+          Text(value,
+              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w800)),
+          Text(label, style: const TextStyle(fontSize: 11)),
+        ],
+      );
 }
 
 class _NetHero extends StatelessWidget {
