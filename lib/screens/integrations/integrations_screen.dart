@@ -52,7 +52,7 @@ class IntegrationsScreen extends ConsumerWidget {
           Text(
             'Note: vitals come from a wearable that writes to the platform above. '
             'Health Connect also receives Samsung Health & Google Fit data. '
-            'Fitbit and Apple Health arrive in upcoming updates.',
+            'Fitbit and Apple Health arrive in upcoming updates.  (build 2)',
             style: Theme.of(context)
                 .textTheme
                 .bodySmall
@@ -98,48 +98,32 @@ class _SourceCard extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.only(bottom: 12),
       child: SectionCard(
-        child: Row(
-          children: [
-            SizedBox(
-              width: 40,
-              child: Text(source.icon,
-                  style: const TextStyle(fontSize: 28),
-                  textAlign: TextAlign.center),
-            ),
-            const SizedBox(width: 12),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      Flexible(
-                        child: Text(source.label,
-                            style: const TextStyle(
-                                fontSize: 16, fontWeight: FontWeight.w700)),
-                      ),
-                      if (connected) ...[
-                        const SizedBox(width: 8),
-                        const Icon(Icons.check_circle,
-                            size: 16, color: AppTheme.positive),
-                      ],
-                    ],
-                  ),
-                  const SizedBox(height: 2),
-                  Text(source.subtitle,
-                      style: TextStyle(
-                          fontSize: 12,
-                          color: Theme.of(context).colorScheme.outline)),
-                ],
+        child: ListTile(
+          contentPadding: EdgeInsets.zero,
+          leading: CircleAvatar(
+            backgroundColor: AppTheme.seed.withValues(alpha: 0.12),
+            foregroundColor: AppTheme.seed,
+            child: Icon(source.icon),
+          ),
+          title: Row(
+            children: [
+              Flexible(
+                child: Text(source.label,
+                    style: const TextStyle(fontWeight: FontWeight.w700)),
               ),
-            ),
-            const SizedBox(width: 8),
-            connected
-                ? TextButton(
-                    onPressed: onDisconnect, child: const Text('Disconnect'))
-                : FilledButton.tonal(
-                    onPressed: onConnect, child: const Text('Connect')),
-          ],
+              if (connected) ...[
+                const SizedBox(width: 6),
+                const Icon(Icons.check_circle,
+                    size: 16, color: AppTheme.positive),
+              ],
+            ],
+          ),
+          subtitle: Text(source.subtitle),
+          trailing: connected
+              ? TextButton(
+                  onPressed: onDisconnect, child: const Text('Disconnect'))
+              : FilledButton.tonal(
+                  onPressed: onConnect, child: const Text('Connect')),
         ),
       ),
     );

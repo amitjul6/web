@@ -186,24 +186,24 @@ class _VitalsCard extends StatelessWidget {
             : Row(
                 children: [
                   Expanded(
-                      child: _tile('❤️', 'HR',
+                      child: _tile(Icons.favorite, 'HR',
                           vitals.heartRate != null ? '${vitals.heartRate}' : '—')),
                   Expanded(
-                      child: _tile('📈', 'HRV',
+                      child: _tile(Icons.show_chart, 'HRV',
                           vitals.hrv != null ? '${vitals.hrv!.round()}' : '—')),
                   Expanded(
-                      child: _tile('🫁', 'SpO₂',
+                      child: _tile(Icons.air, 'SpO₂',
                           vitals.spo2 != null ? '${vitals.spo2!.round()}%' : '—')),
-                  Expanded(child: _tile('😴', 'Sleep', vitals.sleepLabel)),
+                  Expanded(child: _tile(Icons.bedtime, 'Sleep', vitals.sleepLabel)),
                 ],
               ),
       ),
     );
   }
 
-  Widget _tile(String icon, String label, String value) => Column(
+  Widget _tile(IconData icon, String label, String value) => Column(
         children: [
-          Text(icon, style: const TextStyle(fontSize: 20)),
+          Icon(icon, size: 20, color: AppTheme.steps),
           const SizedBox(height: 4),
           Text(value,
               style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w800)),
