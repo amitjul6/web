@@ -100,17 +100,24 @@ class _SourceCard extends StatelessWidget {
       child: SectionCard(
         child: Row(
           children: [
-            Text(source.icon, style: const TextStyle(fontSize: 30)),
-            const SizedBox(width: 14),
+            SizedBox(
+              width: 40,
+              child: Text(source.icon,
+                  style: const TextStyle(fontSize: 28),
+                  textAlign: TextAlign.center),
+            ),
+            const SizedBox(width: 12),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Row(
                     children: [
-                      Text(source.label,
-                          style: const TextStyle(
-                              fontSize: 16, fontWeight: FontWeight.w700)),
+                      Flexible(
+                        child: Text(source.label,
+                            style: const TextStyle(
+                                fontSize: 16, fontWeight: FontWeight.w700)),
+                      ),
                       if (connected) ...[
                         const SizedBox(width: 8),
                         const Icon(Icons.check_circle,

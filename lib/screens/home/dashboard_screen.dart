@@ -184,15 +184,17 @@ class _VitalsCard extends StatelessWidget {
                 ],
               )
             : Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  _tile('❤️', 'HR',
-                      vitals.heartRate != null ? '${vitals.heartRate}' : '—'),
-                  _tile('📈', 'HRV',
-                      vitals.hrv != null ? '${vitals.hrv!.round()}' : '—'),
-                  _tile('🫁', 'SpO₂',
-                      vitals.spo2 != null ? '${vitals.spo2!.round()}%' : '—'),
-                  _tile('😴', 'Sleep', vitals.sleepLabel),
+                  Expanded(
+                      child: _tile('❤️', 'HR',
+                          vitals.heartRate != null ? '${vitals.heartRate}' : '—')),
+                  Expanded(
+                      child: _tile('📈', 'HRV',
+                          vitals.hrv != null ? '${vitals.hrv!.round()}' : '—')),
+                  Expanded(
+                      child: _tile('🫁', 'SpO₂',
+                          vitals.spo2 != null ? '${vitals.spo2!.round()}%' : '—')),
+                  Expanded(child: _tile('😴', 'Sleep', vitals.sleepLabel)),
                 ],
               ),
       ),

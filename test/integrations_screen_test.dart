@@ -6,7 +6,12 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
-  testWidgets('Integrations screen renders the source cards', (tester) async {
+  testWidgets('source card subtitle lays out wide (not vertical)',
+      (tester) async {
+    tester.view.physicalSize = const Size(1400, 1000);
+    tester.view.devicePixelRatio = 1.0;
+    addTearDown(tester.view.resetPhysicalSize);
+
     SharedPreferences.setMockInitialValues({});
     final prefs = await SharedPreferences.getInstance();
 
@@ -18,8 +23,12 @@ void main() {
     );
     await tester.pumpAndSettle();
 
-    expect(find.text('Health Connect'), findsOneWidget);
-    expect(find.text('Fitbit'), findsOneWidget);
-    expect(find.text('Apple Health'), findsOneWidget);
+    final size =
+        tester.getSize(find.text('Google Fit, Samsung Health & more (Android)'));
+    // Broken layout collapses the text to ~1 char wide + very tall.
+    expect(size.width, greaterThan(150),
+        reason: 'subtitle should be wide, got $size');
+    expect(size.height, lessThan(80),
+        reason: 'subtitle should be short, got $size');
   });
 }

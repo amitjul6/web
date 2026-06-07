@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'app_data_provider.dart';
@@ -20,17 +21,28 @@ class StepsController extends Notifier<StepSensorStatus> {
   }
 
   Future<void> initialize() async {
-    final granted =
-        await ref.read(permissionServiceProvider).requestActivityPermission();
-    state = granted ? StepSensorStatus.granted : StepSensorStatus.denied;
-    if (!granted) return;
+    // The step sensor / activity permission plugins are mobile-only; skip on
+    // web and desktop so they never throw there.
+    if (kIsWeb) {
+      state = StepSensorStatus.denied;
+      return;
+    }
+    try {
+      final granted = await ref
+          .read(permissionServiceProvider)
+          .requestActivityPermission();
+      state = granted ? StepSensorStatus.granted : StepSensorStatus.denied;
+      if (!granted) return;
 
-    final pedometer = ref.read(pedometerServiceProvider);
-    _sub?.cancel();
-    _sub = pedometer.todaySteps.listen((steps) {
-      ref.read(appDataProvider.notifier).setSensorSteps(steps);
-    });
-    pedometer.start();
+      final pedometer = ref.read(pedometerServiceProvider);
+      _sub?.cancel();
+      _sub = pedometer.todaySteps.listen((steps) {
+        ref.read(appDataProvider.notifier).setSensorSteps(steps);
+      });
+      pedometer.start();
+    } catch (_) {
+      state = StepSensorStatus.denied;
+    }
   }
 }
 
